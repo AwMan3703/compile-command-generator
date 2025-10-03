@@ -1,0 +1,16 @@
+doctype html
+html
+    head
+        meta(charset='UTF-8')
+        title GCC command generator
+    body
+        p#command-output
+        form#command-builder-options
+            input(type='checkbox' checked disabled)#use-compiler
+            label(for='use-compiler') Usa compiler:
+                select(disabled title='Al momento solo gcc è supportato')#compiler-selector
+                    option(value='gcc') GCC
+            input(type='checkbox')#clear-before-running
+            label(for='clear-before-running') Pulisci il terminale prima di eseguire
+
+        script(src='js/index.js')
