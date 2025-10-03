@@ -1,0 +1,61 @@
+* {
+  color: darkblue;
+  font-family: "JetBrains Mono", "Andale Mono", "Droid Sans Mono", monospace;
+}
+button,
+input[type="submit"] {
+  cursor: pointer;
+  background-color: midnightblue;
+  color: white;
+  border-radius: 0.3em;
+}
+button:active,
+input[type="submit"]:active {
+  background-color: #323dca;
+}
+input[type="checkbox"] {
+  accent-color: darkorange;
+}
+.text-secondary {
+  color: #323dca;
+}
+input.text-secondary {
+  opacity: unset;
+}
+.text-secondary.small {
+  font-size: 0.8em;
+}
+#command-output-block {
+  display: flex;
+  flex-direction: column;
+}
+#command-output {
+  margin-block: 0;
+  margin-block-end: 8px;
+  min-height: 1em;
+  padding: 0.5em;
+  border-radius: 0.3em;
+  font-family: monospace;
+  font-size: 1.5em;
+  color: white;
+  background-color: #0f0f30;
+}
+#command-output::before,
+#command-output::after {
+  color: rgba(255, 140, 0, 0.65);
+}
+#command-output::before {
+  content: 'cwd>';
+}
+#command-output.cursor::after {
+  content: '█';
+}
+form#command-builder-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+form#command-builder-options:has(#run-binary-after-compiling:not(:checked)) > .depends-on-run-binary-after-compiling {
+  opacity: 0.25;
+}
+/*# sourceMappingURL=index.css.map */

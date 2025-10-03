@@ -3,14 +3,42 @@ html
     head
         meta(charset='UTF-8')
         title GCC command generator
+        link(rel='stylesheet' href='css/common.css')
+        link(rel='stylesheet' href='css/index.css')
     body
-        p#command-output
+        div#command-output-block
+            p#command-output
+            div#input-errors
+            button#copy-command-output Copia comando
+
+        hr
+
         form#command-builder-options
-            input(type='checkbox' checked disabled)#use-compiler
-            label(for='use-compiler') Usa compiler:
-                select(disabled title='Al momento solo gcc è supportato')#compiler-selector
-                    option(value='gcc') GCC
-            input(type='checkbox')#clear-before-running
-            label(for='clear-before-running') Pulisci il terminale prima di eseguire
+            div
+                input(type='checkbox' checked disabled)#use-compiler
+                label(for='use-compiler') Usa compiler:
+                    select(disabled title='Al momento solo gcc è supportato')#compiler-selector
+                        option(value='gcc') GCC
+            div
+                input(type='checkbox' checked disabled)#use-source-path
+                label(for='use-source-path') Percorso codice sorgente:
+                    input(type='text' placeholder='relativo a cwd')#source-path
+            div
+                input(type='checkbox' checked disabled)#use-output-path
+                label(for='use-output-path') Percorso eseguibile:
+                    input(type='text' placeholder='relativo a cwd')#output-path
+            div
+                input(type='checkbox')#run-binary-after-compiling
+                label(for='run-binary-after-compiling') Esegui dopo la compilazione
+            div.depends-on-run-binary-after-compiling ├─
+                input(type='checkbox')#clear-screen-before-running
+                label(for='clear-screen-before-running') Pulisci il terminale prima di eseguire
+            div.depends-on-run-binary-after-compiling └─
+                input(type='checkbox')#delete-binary-after-running
+                label(for='delete-binary-after-running') Rimuovi l'eseguibile dopo l'esecuzione
+
+            br
+            span.text-secondary.small L'output non si è aggiornato automaticamente?
+            input.text-secondary(type='submit' value='Aggiorna comando')
 
         script(src='js/index.js')
