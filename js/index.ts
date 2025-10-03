@@ -30,6 +30,17 @@ type commandOptions = {
 
 // FUNCTIONS
 
+function getCommandBuilderFormData() {
+    const options: commandOptions = {}
+    options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : ''
+    options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : ''
+    options.binaryOutputPath = commandBuilderInput_outputPath.value
+    options.runBinaryWhenCompiled = commandBuilderInput_runBinaryAfterCompiling.checked
+    options.clearScreenBeforeRunning = commandBuilderInput_clearScreenBeforeRunning.checked
+    options.deleteBinaryAfterRunning = commandBuilderInput_deleteBinaryAfterRunning.checked
+    return options
+}
+
 // EXAMPLE: clear && gcc my/source/code.c -o my/binary && ./my/binary && rm ./my/binary
 function generateCommand(options: commandOptions) {
     let command: string[] = []
@@ -41,6 +52,10 @@ function generateCommand(options: commandOptions) {
     // Compiler options
     if (options.sourceCodePath) command.push(`${options.sourceCodePath}`)
     if (options.binaryOutputPath) command.push(`${COMPILER_INFO.output_path_parameter_name} ${options.binaryOutputPath}`)
+    if (options.verbose) command.push(`-v`)
+    if (options.standard) command.push(`-std=${options.standard}`)
+    if (options.warningAll) command.push(`-Wall`)
+    if (options.pedantic) { if (options.pedanticErrors) command.push(`-pedantic-errors`); else command.push(`-pedantic`) }
     command.push('&&')
     // Run after compiling
     if (options.runBinaryWhenCompiled) {
@@ -63,17 +78,6 @@ function generateCommand(options: commandOptions) {
     if (command[command.length-1] === '&&') command.pop()
 
     return command.join(' ')
-}
-
-function getCommandBuilderFormData() {
-    const options: commandOptions = {}
-    options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : ''
-    options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : ''
-    options.binaryOutputPath = commandBuilderInput_outputPath.value
-    options.runBinaryWhenCompiled = commandBuilderInput_runBinaryAfterCompiling.checked
-    options.clearScreenBeforeRunning = commandBuilderInput_clearScreenBeforeRunning.checked
-    options.deleteBinaryAfterRunning = commandBuilderInput_deleteBinaryAfterRunning.checked
-    return options
 }
 
 function updateCommandOutput() {

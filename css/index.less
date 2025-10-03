@@ -25,6 +25,9 @@ form#command-builder-options {
 	flex-direction: column;
 	align-items: flex-start;
 }
+form#command-builder-options input#source-path:placeholder-shown { border-color: red; border-style: solid }
+form#command-builder-options:has(#use-pedantic:not(:checked)) > .depends-on-use-pedantic,
 form#command-builder-options:has(#run-binary-after-compiling:not(:checked)) > .depends-on-run-binary-after-compiling {
 	opacity: .25;
+	pointer-events: none;
 }
