@@ -28,6 +28,29 @@ html
                 label(for='use-output-path') Percorso eseguibile:
                     input(type='text' placeholder='relativo a cwd')#output-path
             div
+                input(type='checkbox')#use-verbose
+                label(for='use-verbose') Output prolisso
+            div
+                input(type='checkbox')#use-standard
+                label(for='use-standard') Standard:
+                    select#standard-selector
+                        option(value='c89') C89 (ANSI)
+                        option(value='c90') C90
+                        option(value='c95') C95
+                        option(value='c99') C99
+                        option(value='c11') C11
+                        option(value='c17') C17
+                        option(value='c23') C23
+            div
+                input(type='checkbox')#use-warning-all
+                label(for='use-warning-all') Visualizza tutti i warning
+            div
+                input(type='checkbox')#use-pedantic
+                label(for='use-pedantic') Modalità pedantic
+            div.depends-on-use-pedantic └─
+                input(type='checkbox')#use-pedantic-errors.depends-on-use-pedantic
+                label(for='use-pedantic-errors').depends-on-use-pedantic (come errori)
+            div
                 input(type='checkbox')#run-binary-after-compiling
                 label(for='run-binary-after-compiling') Esegui dopo la compilazione
             div.depends-on-run-binary-after-compiling ├─

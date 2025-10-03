@@ -13,7 +13,14 @@ const commandBuilderInput_useCompiler = document.querySelector('form#command-bui
 const commandBuilderInput_compilerSelector = document.querySelector('form#command-builder-options select#compiler-selector') as HTMLSelectElement
 const commandBuilderInput_useSourcePath = document.querySelector('form#command-builder-options input#use-source-path') as HTMLInputElement
 const commandBuilderInput_sourcePath = document.querySelector('form#command-builder-options input#source-path') as HTMLInputElement
+const commandBuilderInput_useOutputPath = document.querySelector('form#command-builder-options input#use-output-path') as HTMLInputElement
 const commandBuilderInput_outputPath = document.querySelector('form#command-builder-options input#output-path') as HTMLInputElement
+const commandBuilderInput_useVerbose = document.querySelector('form#command-builder-options input#use-verbose') as HTMLInputElement
+const commandBuilderInput_useStandard = document.querySelector('form#command-builder-options input#use-standard') as HTMLInputElement
+const commandBuilderInput_standardSelector = document.querySelector('form#command-builder-options select#standard-selector') as HTMLSelectElement
+const commandBuilderInput_useWarningAll = document.querySelector('form#command-builder-options input#use-warning-all') as HTMLInputElement
+const commandBuilderInput_usePedantic = document.querySelector('form#command-builder-options input#use-pedantic') as HTMLInputElement
+const commandBuilderInput_usePedanticErrors = document.querySelector('form#command-builder-options input#use-pedantic-errors') as HTMLInputElement
 const commandBuilderInput_runBinaryAfterCompiling = document.querySelector('form#command-builder-options input#run-binary-after-compiling') as HTMLInputElement
 const commandBuilderInput_clearScreenBeforeRunning = document.querySelector('form#command-builder-options input#clear-screen-before-running') as HTMLInputElement
 const commandBuilderInput_deleteBinaryAfterRunning = document.querySelector('form#command-builder-options input#delete-binary-after-running') as HTMLInputElement
@@ -22,6 +29,11 @@ type commandOptions = {
     compilerName: string
     sourceCodePath: string
     binaryOutputPath: string
+    verbose: boolean
+    standard: string
+    warningAll: boolean
+    pedantic: boolean
+    pedanticErrors: boolean
     runBinaryWhenCompiled: boolean
     clearScreenBeforeRunning: boolean
     deleteBinaryAfterRunning: boolean
@@ -34,7 +46,12 @@ function getCommandBuilderFormData() {
     const options: commandOptions = {}
     options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : ''
     options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : ''
-    options.binaryOutputPath = commandBuilderInput_outputPath.value
+    options.binaryOutputPath = commandBuilderInput_useOutputPath.checked ? commandBuilderInput_outputPath.value: ''
+    options.verbose = commandBuilderInput_useVerbose.checked
+    options.standard = commandBuilderInput_useStandard.checked ? commandBuilderInput_standardSelector.selectedOptions[0].value : ''
+    options.warningAll = commandBuilderInput_useWarningAll.checked
+    options.pedantic = commandBuilderInput_usePedantic.checked
+    options.pedanticErrors = commandBuilderInput_usePedanticErrors.checked
     options.runBinaryWhenCompiled = commandBuilderInput_runBinaryAfterCompiling.checked
     options.clearScreenBeforeRunning = commandBuilderInput_clearScreenBeforeRunning.checked
     options.deleteBinaryAfterRunning = commandBuilderInput_deleteBinaryAfterRunning.checked

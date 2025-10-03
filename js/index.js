@@ -11,11 +11,33 @@ var commandBuilderInput_useCompiler = document.querySelector('form#command-build
 var commandBuilderInput_compilerSelector = document.querySelector('form#command-builder-options select#compiler-selector');
 var commandBuilderInput_useSourcePath = document.querySelector('form#command-builder-options input#use-source-path');
 var commandBuilderInput_sourcePath = document.querySelector('form#command-builder-options input#source-path');
+var commandBuilderInput_useOutputPath = document.querySelector('form#command-builder-options input#use-output-path');
 var commandBuilderInput_outputPath = document.querySelector('form#command-builder-options input#output-path');
+var commandBuilderInput_useVerbose = document.querySelector('form#command-builder-options input#use-verbose');
+var commandBuilderInput_useStandard = document.querySelector('form#command-builder-options input#use-standard');
+var commandBuilderInput_standardSelector = document.querySelector('form#command-builder-options select#standard-selector');
+var commandBuilderInput_useWarningAll = document.querySelector('form#command-builder-options input#use-warning-all');
+var commandBuilderInput_usePedantic = document.querySelector('form#command-builder-options input#use-pedantic');
+var commandBuilderInput_usePedanticErrors = document.querySelector('form#command-builder-options input#use-pedantic-errors');
 var commandBuilderInput_runBinaryAfterCompiling = document.querySelector('form#command-builder-options input#run-binary-after-compiling');
 var commandBuilderInput_clearScreenBeforeRunning = document.querySelector('form#command-builder-options input#clear-screen-before-running');
 var commandBuilderInput_deleteBinaryAfterRunning = document.querySelector('form#command-builder-options input#delete-binary-after-running');
 // FUNCTIONS
+function getCommandBuilderFormData() {
+    var options = {};
+    options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : '';
+    options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : '';
+    options.binaryOutputPath = commandBuilderInput_useOutputPath.checked ? commandBuilderInput_outputPath.value : '';
+    options.verbose = commandBuilderInput_useVerbose.checked;
+    options.standard = commandBuilderInput_useStandard.checked ? commandBuilderInput_standardSelector.selectedOptions[0].value : '';
+    options.warningAll = commandBuilderInput_useWarningAll.checked;
+    options.pedantic = commandBuilderInput_usePedantic.checked;
+    options.pedanticErrors = commandBuilderInput_usePedanticErrors.checked;
+    options.runBinaryWhenCompiled = commandBuilderInput_runBinaryAfterCompiling.checked;
+    options.clearScreenBeforeRunning = commandBuilderInput_clearScreenBeforeRunning.checked;
+    options.deleteBinaryAfterRunning = commandBuilderInput_deleteBinaryAfterRunning.checked;
+    return options;
+}
 // EXAMPLE: clear && gcc my/source/code.c -o my/binary && ./my/binary && rm ./my/binary
 function generateCommand(options) {
     var command = [];
@@ -29,6 +51,18 @@ function generateCommand(options) {
         command.push("".concat(options.sourceCodePath));
     if (options.binaryOutputPath)
         command.push("".concat(COMPILER_INFO.output_path_parameter_name, " ").concat(options.binaryOutputPath));
+    if (options.verbose)
+        command.push("-v");
+    if (options.standard)
+        command.push("-std=".concat(options.standard));
+    if (options.warningAll)
+        command.push("-Wall");
+    if (options.pedantic) {
+        if (options.pedanticErrors)
+            command.push("-pedantic-errors");
+        else
+            command.push("-pedantic");
+    }
     command.push('&&');
     // Run after compiling
     if (options.runBinaryWhenCompiled) {
@@ -50,16 +84,6 @@ function generateCommand(options) {
     if (command[command.length - 1] === '&&')
         command.pop();
     return command.join(' ');
-}
-function getCommandBuilderFormData() {
-    var options = {};
-    options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : '';
-    options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : '';
-    options.binaryOutputPath = commandBuilderInput_outputPath.value;
-    options.runBinaryWhenCompiled = commandBuilderInput_runBinaryAfterCompiling.checked;
-    options.clearScreenBeforeRunning = commandBuilderInput_clearScreenBeforeRunning.checked;
-    options.deleteBinaryAfterRunning = commandBuilderInput_deleteBinaryAfterRunning.checked;
-    return options;
 }
 function updateCommandOutput() {
     var options = getCommandBuilderFormData();
