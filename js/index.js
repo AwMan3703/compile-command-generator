@@ -1,7 +1,6 @@
 // CONSTANTS
 var SOURCE_CODE_EXTENSION = '.c';
 var COMPILER_INFO = {
-    output_path_parameter_name: '-o',
     default_output_filename: 'a.out'
 };
 var commandOutputParagraph = document.querySelector('p#command-output');
@@ -22,7 +21,12 @@ var commandBuilderInput_usePedanticErrors = document.querySelector('form#command
 var commandBuilderInput_runBinaryAfterCompiling = document.querySelector('form#command-builder-options input#run-binary-after-compiling');
 var commandBuilderInput_clearScreenBeforeRunning = document.querySelector('form#command-builder-options input#clear-screen-before-running');
 var commandBuilderInput_deleteBinaryAfterRunning = document.querySelector('form#command-builder-options input#delete-binary-after-running');
+var updateCommandOutputButton = document.querySelector('#update-output-button');
 // FUNCTIONS
+function adaptTextInputToValueLength(e) {
+    var text = (!e.value || e.value === '') ? e.placeholder : e.value;
+    e.size = Math.max(text.length, 5);
+}
 function getCommandBuilderFormData() {
     var options = {};
     options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : '';
@@ -49,8 +53,8 @@ function generateCommand(options) {
     // Compiler options
     if (options.sourceCodePath)
         command.push("".concat(options.sourceCodePath));
-    if (options.binaryOutputPath)
-        command.push("".concat(COMPILER_INFO.output_path_parameter_name, " ").concat(options.binaryOutputPath));
+    if (options.binaryOutputPath && options.binaryOutputPath !== COMPILER_INFO.default_output_filename)
+        command.push("-o ".concat(options.binaryOutputPath));
     if (options.verbose)
         command.push("-v");
     if (options.standard)
@@ -88,34 +92,46 @@ function generateCommand(options) {
 function updateCommandOutput() {
     var options = getCommandBuilderFormData();
     commandOutputParagraph.innerText = generateCommand(options);
+    document.title = "".concat(options.compilerName.toUpperCase(), " command generator");
 }
-// SCRIPT
-copyCommandOutputButton.addEventListener('click', function (_) {
+function copyCommandToClipboard() {
     navigator.clipboard.writeText(commandOutputParagraph.innerText)
-        .then(function (text) {
+        .then(function (_) {
         var originalLabel = copyCommandOutputButton.innerText;
         copyCommandOutputButton.innerText = commandOutputParagraph.innerText.length > 0 ? 'Copiato!' : 'Nulla da copiare!';
         setTimeout(function (_) { return copyCommandOutputButton.innerText = originalLabel; }, 2000);
     });
-});
+}
+// SCRIPT
+copyCommandOutputButton.addEventListener('click', copyCommandToClipboard);
+copyCommandOutputButton.addEventListener('touchend', copyCommandToClipboard);
 commandBuilderInput_sourcePath.addEventListener('input', function (_) {
     var e = commandBuilderInput_sourcePath;
-    if (e.value.endsWith(SOURCE_CODE_EXTENSION))
+    if (!e.value || e.value === '' || e.value === SOURCE_CODE_EXTENSION) {
+        e.value = '';
         return;
+    }
+    if (e.value.endsWith(SOURCE_CODE_EXTENSION) && e.value !== SOURCE_CODE_EXTENSION) {
+        return;
+    }
     e.value += SOURCE_CODE_EXTENSION;
     e.selectionStart = e.selectionEnd = e.value.length - 2;
 });
+commandBuilderInput_sourcePath.addEventListener('input', function (_) { return adaptTextInputToValueLength(commandBuilderInput_sourcePath); });
 commandBuilderInput_outputPath.addEventListener('input', function (_) {
     var e = commandBuilderInput_outputPath;
-    if (e.value && e.value !== '')
-        e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '');
-    else
-        e.value = COMPILER_INFO.default_output_filename;
+    if (!e.value || e.value === '' || e.value === './') {
+        e.value = '';
+        return;
+    }
+    e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '');
 });
+commandBuilderInput_outputPath.addEventListener('input', function (_) { return adaptTextInputToValueLength(commandBuilderInput_outputPath); });
 commandBuilderOptionsForm.addEventListener('change', updateCommandOutput);
 commandBuilderOptionsForm.addEventListener('submit', function (e) {
     e.preventDefault();
     updateCommandOutput();
 });
+updateCommandOutputButton.addEventListener('click', updateCommandOutput);
 updateCommandOutput();
 setInterval(function (_) { return commandOutputParagraph.classList.toggle('cursor'); }, 500);

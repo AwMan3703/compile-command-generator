@@ -1,7 +1,6 @@
 // CONSTANTS
 const SOURCE_CODE_EXTENSION = '.c'
 const COMPILER_INFO = {
-    output_path_parameter_name: '-o',
     default_output_filename: 'a.out'
 }
 
@@ -25,6 +24,8 @@ const commandBuilderInput_runBinaryAfterCompiling = document.querySelector('form
 const commandBuilderInput_clearScreenBeforeRunning = document.querySelector('form#command-builder-options input#clear-screen-before-running') as HTMLInputElement
 const commandBuilderInput_deleteBinaryAfterRunning = document.querySelector('form#command-builder-options input#delete-binary-after-running') as HTMLInputElement
 
+const updateCommandOutputButton = document.querySelector('#update-output-button') as HTMLButtonElement
+
 type commandOptions = {
     compilerName: string
     sourceCodePath: string
@@ -41,6 +42,11 @@ type commandOptions = {
 
 
 // FUNCTIONS
+
+function adaptTextInputToValueLength(e: HTMLInputElement) {
+    const text = (!e.value || e.value === '') ? e.placeholder : e.value
+    e.size = Math.max(text.length, 5)
+}
 
 function getCommandBuilderFormData() {
     const options: commandOptions = {}
@@ -68,7 +74,7 @@ function generateCommand(options: commandOptions) {
     if (!options.sourceCodePath) return command.join(' ')
     // Compiler options
     if (options.sourceCodePath) command.push(`${options.sourceCodePath}`)
-    if (options.binaryOutputPath) command.push(`${COMPILER_INFO.output_path_parameter_name} ${options.binaryOutputPath}`)
+    if (options.binaryOutputPath && options.binaryOutputPath !== COMPILER_INFO.default_output_filename) command.push(`-o ${options.binaryOutputPath}`)
     if (options.verbose) command.push(`-v`)
     if (options.standard) command.push(`-std=${options.standard}`)
     if (options.warningAll) command.push(`-Wall`)
@@ -100,37 +106,46 @@ function generateCommand(options: commandOptions) {
 function updateCommandOutput() {
     const options = getCommandBuilderFormData()
     commandOutputParagraph.innerText = generateCommand(options)
+    document.title = `${options.compilerName.toUpperCase()} command generator`
+}
+
+function copyCommandToClipboard() {
+    navigator.clipboard.writeText(commandOutputParagraph.innerText)
+        .then(_ => {
+            const originalLabel = copyCommandOutputButton.innerText
+            copyCommandOutputButton.innerText = commandOutputParagraph.innerText.length > 0 ? 'Copiato!' : 'Nulla da copiare!'
+            setTimeout(_ => copyCommandOutputButton.innerText = originalLabel, 2000)
+        })
 }
 
 
 
 // SCRIPT
 
-copyCommandOutputButton.addEventListener('click', _ => {
-    navigator.clipboard.writeText(commandOutputParagraph.innerText)
-        .then(text => {
-            const originalLabel = copyCommandOutputButton.innerText
-            copyCommandOutputButton.innerText = commandOutputParagraph.innerText.length > 0 ? 'Copiato!' : 'Nulla da copiare!'
-            setTimeout(_ => copyCommandOutputButton.innerText = originalLabel, 2000)
-        })
-})
+copyCommandOutputButton.addEventListener('click', copyCommandToClipboard)
+copyCommandOutputButton.addEventListener('touchend', copyCommandToClipboard)
 
 commandBuilderInput_sourcePath.addEventListener('input', _ => {
     const e = commandBuilderInput_sourcePath
-    if (e.value.endsWith(SOURCE_CODE_EXTENSION)) return
+    if (!e.value || e.value === '' || e.value === SOURCE_CODE_EXTENSION) { e.value = ''; return }
+    if (e.value.endsWith(SOURCE_CODE_EXTENSION) && e.value !== SOURCE_CODE_EXTENSION) { return }
     e.value += SOURCE_CODE_EXTENSION
     e.selectionStart = e.selectionEnd = e.value.length - 2
 })
+commandBuilderInput_sourcePath.addEventListener('input', _ => adaptTextInputToValueLength(commandBuilderInput_sourcePath))
 commandBuilderInput_outputPath.addEventListener('input', _ => {
     const e = commandBuilderInput_outputPath
-    if (e.value && e.value !== '') e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '')
-    else e.value = COMPILER_INFO.default_output_filename
+    if (!e.value || e.value === '' || e.value === './') { e.value = ''; return }
+    e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '')
 })
+commandBuilderInput_outputPath.addEventListener('input', _ => adaptTextInputToValueLength(commandBuilderInput_outputPath))
 commandBuilderOptionsForm.addEventListener('change', updateCommandOutput)
 commandBuilderOptionsForm.addEventListener('submit', e => {
     e.preventDefault()
     updateCommandOutput()
 })
+
+updateCommandOutputButton.addEventListener('click', updateCommandOutput)
 
 updateCommandOutput()
 setInterval(_ => commandOutputParagraph.classList.toggle('cursor'), 500)

@@ -27,9 +27,28 @@ form#command-builder-options {
 	flex-direction: column;
 	align-items: flex-start;
 }
+form#command-builder-options > :has(input[type='checkbox']:checked)[data-cli-token]::after {
+	margin-inline-start: 8px;
+	font-size: .8em;
+	color: @color-background-light;
+	background-color: @color-background-dark;
+	padding-inline: .25em;
+	border-radius: .3em;
+	content: attr(data-cli-token);
+}
 form#command-builder-options input#source-path:placeholder-shown { border-color: red; border-style: solid }
 form#command-builder-options:has(#use-pedantic:not(:checked)) > .depends-on-use-pedantic,
 form#command-builder-options:has(#run-binary-after-compiling:not(:checked)) > .depends-on-run-binary-after-compiling {
 	opacity: .25;
 	pointer-events: none;
+}
+
+#update-output-text {
+	color: white;
+}
+#update-output-button {
+	background-color: @color-background-dark;
+}
+#update-output-button:active {
+	background-color: @color-background-light;
 }
