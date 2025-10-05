@@ -122,9 +122,11 @@ commandBuilderInput_outputPath.addEventListener('input', function (_) {
     var e = commandBuilderInput_outputPath;
     if (!e.value || e.value === '' || e.value === './') {
         e.value = '';
+        commandBuilderInput_useOutputPath.checked = false;
         return;
     }
     e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '');
+    commandBuilderInput_useOutputPath.checked = true;
 });
 commandBuilderInput_outputPath.addEventListener('input', function (_) { return adaptTextInputToValueLength(commandBuilderInput_outputPath); });
 commandBuilderOptionsForm.addEventListener('change', updateCommandOutput);

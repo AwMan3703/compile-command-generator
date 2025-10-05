@@ -135,8 +135,9 @@ commandBuilderInput_sourcePath.addEventListener('input', _ => {
 commandBuilderInput_sourcePath.addEventListener('input', _ => adaptTextInputToValueLength(commandBuilderInput_sourcePath))
 commandBuilderInput_outputPath.addEventListener('input', _ => {
     const e = commandBuilderInput_outputPath
-    if (!e.value || e.value === '' || e.value === './') { e.value = ''; return }
+    if (!e.value || e.value === '' || e.value === './') { e.value = ''; commandBuilderInput_useOutputPath.checked = false; return }
     e.value = (!e.value.startsWith('./') ? './' : '') + (e.value !== '.' ? e.value : '')
+    commandBuilderInput_useOutputPath.checked = true
 })
 commandBuilderInput_outputPath.addEventListener('input', _ => adaptTextInputToValueLength(commandBuilderInput_outputPath))
 commandBuilderOptionsForm.addEventListener('change', updateCommandOutput)
