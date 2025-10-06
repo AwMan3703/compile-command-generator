@@ -8,7 +8,9 @@ const commandOutputParagraph = document.querySelector('p#command-output') as HTM
 const copyCommandOutputButton = document.querySelector('button#copy-command-output') as HTMLButtonElement
 
 const commandBuilderOptionsForm = document.querySelector('form#command-builder-options') as HTMLFormElement
+
 const commandBuilderInput_useCompiler = document.querySelector('form#command-builder-options input#use-compiler') as HTMLInputElement
+const commandBuilderInput_platformSelector = document.querySelector('form#command-builder-options select#platform-selector') as HTMLSelectElement
 const commandBuilderInput_compilerSelector = document.querySelector('form#command-builder-options select#compiler-selector') as HTMLSelectElement
 const commandBuilderInput_useSourcePath = document.querySelector('form#command-builder-options input#use-source-path') as HTMLInputElement
 const commandBuilderInput_sourcePath = document.querySelector('form#command-builder-options input#source-path') as HTMLInputElement
@@ -27,7 +29,8 @@ const commandBuilderInput_deleteBinaryAfterRunning = document.querySelector('for
 const updateCommandOutputButton = document.querySelector('#update-output-button') as HTMLButtonElement
 
 type commandOptions = {
-    compilerName: string
+    platformName: 'macos' | 'linux' | string
+    compilerName: 'gcc' | string
     sourceCodePath: string
     binaryOutputPath: string
     verbose: boolean
@@ -50,6 +53,7 @@ function adaptTextInputToValueLength(e: HTMLInputElement) {
 
 function getCommandBuilderFormData() {
     const options: commandOptions = {}
+    options.platformName = commandBuilderInput_platformSelector.selectedOptions[0].value
     options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : ''
     options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : ''
     options.binaryOutputPath = commandBuilderInput_useOutputPath.checked ? commandBuilderInput_outputPath.value: ''
@@ -113,8 +117,13 @@ function copyCommandToClipboard() {
     navigator.clipboard.writeText(commandOutputParagraph.innerText)
         .then(_ => {
             const originalLabel = copyCommandOutputButton.innerText
+            const originalEvents = copyCommandOutputButton.style.pointerEvents
             copyCommandOutputButton.innerText = commandOutputParagraph.innerText.length > 0 ? 'Copiato!' : 'Nulla da copiare!'
-            setTimeout(_ => copyCommandOutputButton.innerText = originalLabel, 2000)
+            copyCommandOutputButton.style.pointerEvents = 'none'
+            setTimeout(_ => {
+                copyCommandOutputButton.innerText = originalLabel
+                copyCommandOutputButton.style.pointerEvents = originalEvents
+            }, 2000)
         })
 }
 

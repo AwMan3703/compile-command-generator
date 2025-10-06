@@ -16,11 +16,21 @@ html
         hr
 
         form#command-builder-options
+            div Piattaforma:
+                select#platform-selector
+                    option(value='macos') macOS
+                    option(data-non-tested value='linux') Linux e WSL
+                    option(disabled value='windows') Windows
+                p#platform-warning.text-secondary.small ⚠️ Il funzionamento è verificato solo per macOS
+
+            hr
+
             div
                 input(type='checkbox' checked disabled)#use-compiler
                 label(for='use-compiler') Compiler:
-                    select(disabled title='Al momento solo gcc è supportato')#compiler-selector
+                    select#compiler-selector
                         option(value='gcc') GCC
+                        option(disabled value='clang') CLang
             div
                 input(type='checkbox' checked disabled)#use-source-path
                 label(for='use-source-path') Percorso codice sorgente:
@@ -62,8 +72,9 @@ html
                 input(type='checkbox')#delete-binary-after-running
                 label(for='delete-binary-after-running') Rimuovi l'eseguibile dopo l'esecuzione
 
-            br
-            span#update-output-text.text-secondary.small L'output non si è aggiornato automaticamente?
+            hr
+
+            p#update-output-text L'output non si è aggiornato automaticamente?
             input(type='submit' value='Aggiorna comando')#update-output-button.text-secondary
 
         script(src='js/index.js')

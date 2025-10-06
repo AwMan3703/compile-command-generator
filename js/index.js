@@ -7,6 +7,7 @@ var commandOutputParagraph = document.querySelector('p#command-output');
 var copyCommandOutputButton = document.querySelector('button#copy-command-output');
 var commandBuilderOptionsForm = document.querySelector('form#command-builder-options');
 var commandBuilderInput_useCompiler = document.querySelector('form#command-builder-options input#use-compiler');
+var commandBuilderInput_platformSelector = document.querySelector('form#command-builder-options select#platform-selector');
 var commandBuilderInput_compilerSelector = document.querySelector('form#command-builder-options select#compiler-selector');
 var commandBuilderInput_useSourcePath = document.querySelector('form#command-builder-options input#use-source-path');
 var commandBuilderInput_sourcePath = document.querySelector('form#command-builder-options input#source-path');
@@ -29,6 +30,7 @@ function adaptTextInputToValueLength(e) {
 }
 function getCommandBuilderFormData() {
     var options = {};
+    options.platformName = commandBuilderInput_platformSelector.selectedOptions[0].value;
     options.compilerName = commandBuilderInput_useCompiler ? commandBuilderInput_compilerSelector.selectedOptions[0].value : '';
     options.sourceCodePath = commandBuilderInput_useSourcePath.checked ? commandBuilderInput_sourcePath.value : '';
     options.binaryOutputPath = commandBuilderInput_useOutputPath.checked ? commandBuilderInput_outputPath.value : '';
@@ -98,8 +100,13 @@ function copyCommandToClipboard() {
     navigator.clipboard.writeText(commandOutputParagraph.innerText)
         .then(function (_) {
         var originalLabel = copyCommandOutputButton.innerText;
+        var originalEvents = copyCommandOutputButton.style.pointerEvents;
         copyCommandOutputButton.innerText = commandOutputParagraph.innerText.length > 0 ? 'Copiato!' : 'Nulla da copiare!';
-        setTimeout(function (_) { return copyCommandOutputButton.innerText = originalLabel; }, 2000);
+        copyCommandOutputButton.style.pointerEvents = 'none';
+        setTimeout(function (_) {
+            copyCommandOutputButton.innerText = originalLabel;
+            copyCommandOutputButton.style.pointerEvents = originalEvents;
+        }, 2000);
     });
 }
 // SCRIPT

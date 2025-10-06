@@ -10,7 +10,8 @@
 	min-height: 1em;
 	line-height: 1em;
 	word-break: keep-all;
-	padding: .5em;
+	padding-inline: .5em;
+	padding-block: .9em;
 	border-radius: .3em;
 	font-family: monospace;
 	font-size: 1.5em;
@@ -20,6 +21,7 @@
 #command-output::before,
 #command-output::after { color: @color-accent-secondary; }
 #command-output::before { content: 'cwd>' }
+#command-output::after { content: '_'; }
 #command-output.cursor::after { content: '█'; }
 
 form#command-builder-options {
@@ -45,8 +47,20 @@ form#command-builder-options:has(#run-binary-after-compiling:not(:checked)) > .d
 	pointer-events: none;
 }
 
+#platform-warning {
+	display: none;
+	margin-block: .5em;
+}
+#platform-selector:has(> option[data-non-tested]:checked) ~ #platform-warning {
+	display: revert;
+}
+
 #update-output-text {
 	color: white;
+	opacity: .75;
+	font-size: .9em;
+	margin: 0;
+	margin-block-end: .5em;
 }
 #update-output-button {
 	background-color: @color-background-dark;
